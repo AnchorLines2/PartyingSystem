@@ -1,0 +1,9 @@
+C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\bin\Debug\net4.8\PartyingSystem.dll
+C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\bin\Debug\net4.8\PartyingSystem.pdb
+C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\PartyingSystem.csproj.AssemblyReference.cache
+C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\PartyingSystem.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\PartyingSystem.AssemblyInfoInputs.cache
+C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\PartyingSystem.AssemblyInfo.cs
+C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\PartyingSystem.csproj.CoreCompileInputs.cache
+C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\PartyingSystem.dll
+C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\PartyingSystem.pdb
