@@ -1,2 +1,2 @@
 # PartyingSystem
-Partying System for the video game "PucK"
+Partying System for the video game "Puck"
