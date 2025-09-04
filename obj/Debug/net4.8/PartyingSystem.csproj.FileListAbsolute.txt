@@ -7,3 +7,4 @@ C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\Part
 C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\PartyingSystem.csproj.CoreCompileInputs.cache
 C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\PartyingSystem.dll
 C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\PartyingSystem.pdb
+C:\Users\melod\OffloadDesktop\Code\PuckMods\PartyingSystem\obj\Debug\net4.8\PartyingSystem.sourcelink.json

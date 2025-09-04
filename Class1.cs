@@ -2,84 +2,41 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Reflection;
+using HarmonyLib;
+using System;
 
 namespace MyPuckMod
 {
     public class Class1 : IPuckMod
     {
-
         public static bool lobbyCreateSuccess;
         public static LobbyCreated_t lobbyData;
-        public static Button mainMenuSettingsButton;
+        static readonly Harmony harmony = new Harmony("ANCHOR.PartyingSystem");
 
-                //no clue what this does
-        static readonly FieldInfo _mainMenuSettingsButtonField = typeof(UIMainMenu)
-            .GetField("settingsButton",
-            BindingFlags.Instance | BindingFlags.NonPublic);
-            
-        private static void LocateReferenceButtons()
-        {
-            mainMenuSettingsButton = (Button)_mainMenuSettingsButtonField.GetValue(UIMainMenu.Instance);
-            Debug.Log($"Located main menu settings button: {mainMenuSettingsButton}");
-        }
-
-        public static void AddHoverEffectsForButton(Button button)
-        {
-            button.RegisterCallback<MouseEnterEvent>(new EventCallback<MouseEnterEvent>((evt) =>
-            {
-                button.style.backgroundColor = Color.white;
-                button.style.color = Color.black;
-            }));
-            button.RegisterCallback<MouseLeaveEvent>(new EventCallback<MouseLeaveEvent>((evt) =>
-            {
-                button.style.backgroundColor = new StyleColor(new Color(0.25f, 0.25f, 0.25f));
-                button.style.color = Color.white;
-            }));
-        }
-
-        Button addRankedButton(Button referenceButton)
-        {
-            Button button = new Button
-            {
-                text = "LOBBY PRACTICE - 2",
-                style =
-                {
-                    backgroundColor = new StyleColor(new Color(0.25f, 0.25f, 0.25f)),
-                    unityTextAlign = TextAnchor.MiddleLeft,
-                    width = new StyleLength(new Length(100, LengthUnit.Percent)),
-                    minWidth = new StyleLength(new Length(100, LengthUnit.Percent)),
-                    maxWidth = new StyleLength(new Length(100, LengthUnit.Percent)),
-                    height = referenceButton.style.height,
-                    minHeight = referenceButton.style.minHeight,
-                    maxHeight = referenceButton.style.maxHeight,
-                    marginTop = 8,
-                    paddingTop = 8,
-                    paddingBottom = 8,
-                    paddingLeft = 15
-                }
-            };
-            AddHoverEffectsForButton(button);
-            button.RegisterCallback<ClickEvent>(ButtonClicked);
-            return button;
-        }
-
-        void addRankedButton(UIMainMenu mainMenu)
-        {
-            VisualElement containerVisualElement = mainMenuSettingsButton.parent;
-            if (containerVisualElement == null)
-            {
-                Debug.LogError("Container VisualElement not found (parent of settingsButton missing)!");
-                return;
-            }
-
-            Button reskinMenuButton = addRankedButton(mainMenuSettingsButton);
-            containerVisualElement.Insert(2, reskinMenuButton);
-        }
 
         public bool OnEnable()
         {
-            LocateReferenceButtons();
-            addRankedButton(UIMainMenu.Instance);
+            try
+            {
+                // Patched all functions we have defined to be patched
+                harmony.PatchAll();
+                Debug.Log("Party Patch Success");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Harmony patch failed: {e.Message}");
+                return false;
+            }
+
+            //no clue what this does
+            FieldInfo _mainMenuSettingsButtonField = typeof(UIMainMenu)
+                .GetField("settingsButton",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+
+            Button mainMenuSettingsButton = (Button)_mainMenuSettingsButtonField.GetValue(UIMainMenu.Instance);
+            Debug.Log($"Located main menu settings button: {mainMenuSettingsButton}");
+
+            ButtonManager.addRankedButton(mainMenuSettingsButton, ButtonClicked);
 
             Debug.Log("Hello world from PartyingSystem!");
             Debug.Log("Creating Steam Lobby...");
@@ -87,6 +44,24 @@ namespace MyPuckMod
             CallResult<LobbyCreated_t> handler = new CallResult<LobbyCreated_t>();
             SteamAPICall_t created = SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, 6);
             handler.Set(created, LobbyCreated);
+
+
+
+            return true;
+        }
+
+        public bool OnDisable()
+        {
+            try
+            {
+                // Patched all functions we have defined to be patched
+                harmony.UnpatchSelf();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Harmony unpatch failed: {e.Message}");
+                return false;
+            }
 
             return true;
         }
@@ -107,7 +82,7 @@ namespace MyPuckMod
             lobbyDataUpdate = Callback<LobbyGameCreated_t>.Create(lobbyUpdate);
         }
 
-        
+
         private Callback<LobbyGameCreated_t> lobbyDataUpdate;
         public void lobbyUpdate(LobbyGameCreated_t pCallback)
         {
@@ -130,9 +105,15 @@ namespace MyPuckMod
             SteamMatchmaking.SetLobbyGameServer(new CSteamID(lobbyData.m_ulSteamIDLobby), 0x7f000001, 7777, new CSteamID());
         }
 
-        public bool OnDisable()
+        [HarmonyPatch(typeof(ConnectionManager), "Client_StartClient")]
+        public class BringPartyIntoGame
         {
-            return true;
+            [HarmonyPrefix]
+            public static bool Prefix(string ipAddress, ushort port, string password = "")
+            {
+                Debug.Log("Writing from harmony patch!, " + ipAddress + ":" + port);
+                return true;
+            }
         }
     }
 }
