@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PartyingSystem")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2a4e5e37d3f6645dfe04cf5977206192627d1d92")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aa59050a5bd3c512937778b92cea8a5da014c38b")]
 [assembly: System.Reflection.AssemblyProductAttribute("PartyingSystem")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PartyingSystem")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

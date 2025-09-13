@@ -4,6 +4,7 @@ using UnityEngine.UIElements;
 using System.Reflection;
 using HarmonyLib;
 using System;
+using Unity.Netcode;
 
 namespace MyPuckMod
 {
@@ -12,7 +13,6 @@ namespace MyPuckMod
         public static bool lobbyCreateSuccess;
         public static LobbyCreated_t lobbyData;
         static readonly Harmony harmony = new Harmony("ANCHOR.PartyingSystem");
-
 
         public bool OnEnable()
         {
@@ -82,13 +82,17 @@ namespace MyPuckMod
             lobbyDataUpdate = Callback<LobbyGameCreated_t>.Create(lobbyUpdate);
         }
 
-
         private Callback<LobbyGameCreated_t> lobbyDataUpdate;
         public void lobbyUpdate(LobbyGameCreated_t pCallback)
         {
             Debug.Log("LobbyDataUpdate fired for lobby: " + (CSteamID)pCallback.m_ulSteamIDLobby);
-            MonoBehaviourSingleton<EventManager>.Instance.TriggerEvent("Event_Client_OnMainMenuClickPractice", null);
-        }//*/
+            //MonoBehaviourSingleton<EventManager>.Instance.TriggerEvent("Event_Client_OnMainMenuClickPractice", null);
+
+            string ipAddress = pCallback.m_unIP + "";
+            ushort port = pCallback.m_usPort;
+            string password = "";
+            ConnectionManager.Instance.Client_StartClient(ipAddress, port, password);
+        }
 
         public static void ButtonClicked(ClickEvent clickEvent)
         {
@@ -100,18 +104,24 @@ namespace MyPuckMod
             }
 
             //MonoBehaviourSingleton<EventManager>.Instance.TriggerEvent("Event_Client_OnMainMenuClickPractice", null);
-
             //https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyGameServer
-            SteamMatchmaking.SetLobbyGameServer(new CSteamID(lobbyData.m_ulSteamIDLobby), 0x7f000001, 7777, new CSteamID());
+
+            uint ipAddress = 0x7f000001;
+            ushort port = 7777;
+            string password = "";
+
+            //(port, name, maxPlayers, password, voip, isPublic, ownerSteamId, uPnP = false)
+            ServerManager.Instance.Client_StartHost(port, "LOBBY PRACTICE", 12, password, true, false, MonoBehaviourSingleton<StateManager>.Instance.PlayerData.steamId, false);
+            SteamMatchmaking.SetLobbyGameServer(new CSteamID(lobbyData.m_ulSteamIDLobby), ipAddress, port, new CSteamID());
         }
 
-        [HarmonyPatch(typeof(ConnectionManager), "Client_StartClient")]
+        [HarmonyPatch(typeof(NetworkManager), "StartClient")]
         public class BringPartyIntoGame
         {
             [HarmonyPrefix]
-            public static bool Prefix(string ipAddress, ushort port, string password = "")
+            public static bool Prefix()
             {
-                Debug.Log("Writing from harmony patch!, " + ipAddress + ":" + port);
+                Debug.Log("Writing from harmony patch! (StartClient)");
                 return true;
             }
         }
